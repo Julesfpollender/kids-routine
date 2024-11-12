@@ -1,0 +1,90 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    align-items: center;
+    min-height: calc(100vh - 20px);
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+header{
+    display: flex;
+    align-items: flex-end;
+    flex-direction: column;
+}
+
+main {
+    max-width: 1230px;
+}
+
+#timer {
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-right: 5px solid #c04858;
+}
+  
+#progress-bar {
+    font-size: 26px;
+    width: 0%;
+    height: 60px;
+    background: linear-gradient(to bottom, #04AA6D 35%, #74db9f);
+    text-align: center;
+    line-height: 60px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+}
+
+#progress-bar.warning{
+    background: linear-gradient(to bottom, #d3d364 35%, #f8f875);
+}
+
+#progress-bar.expired{
+    background: linear-gradient(to bottom, #dd5366 35%, #c04858);
+}
+
+.steps{
+    display: none;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 5px -5px;
+}
+
+.steps.selected{
+    display: flex;
+}
+
+.step {
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    min-width: 250px;
+    min-height: 250px;
+    cursor: pointer;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.pipi{
+    background-image: url(./assets/pipi.jpg);
+}
+
+.dejeuner{
+    background-image: url(./assets/dejeuner.jpg);
+}
+
+.brosser{
+    background-image: url(./assets/brosser-dents.jpg);
+}
+
+.couche{
+    background-image: url(./assets/couche.jpg);
+}
+
+.habillage{
+    background-image: url(./assets/habillage.jpg);
+}
+
+.step.selected{
+    box-shadow: inset 0 0 0 2000px rgba(152, 251, 152, 0.8);
+}

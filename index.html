@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Kids Routine</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="index.css">
+    </head>
+    <body>
+        <header>
+            <div>
+                <input id="isMorning" type="checkbox" onchange="toggle(this)" checked/><label for="isMorning">Matin</label>
+            </div>
+        <main>
+            <div id="timer">
+                <div id="progress-bar"></div>
+            </div>
+
+            <h1>Téo</h1>
+            <div class="steps morning selected">
+                <div class="step kid-1 pipi" onclick="clicked(this)"></div>
+                <div class="step kid-1 habillage" onclick="clicked(this)"></div>
+                <div class="step kid-1 dejeuner" onclick="clicked(this)"></div>
+                <div class="step kid-1 brosser" onclick="clicked(this)"></div>
+            </div>
+            <div class="steps night">
+                <div class="step kid-1 brosser" onclick="clicked(this)"></div>
+                <div class="step kid-1 pipi" onclick="clicked(this)"></div>
+            </div>
+
+            <h1>Livio</h1>
+            <div class="steps morning selected">
+                <div class="step kid-2 couche" onclick="clicked(this)"></div>
+                <div class="step kid-2 habillage" onclick="clicked(this)"></div>
+                <div class="step kid-2 dejeuner" onclick="clicked(this)"></div>
+                <div class="step kid-2 brosser" onclick="clicked(this)"></div>
+            </div>
+            <div class="steps night">
+                <div class="step kid-2 brosser" onclick="clicked(this)"></div>
+                <div class="step kid-2 couche" onclick="clicked(this)"></div>
+            </div>
+        </main>
+    </body>
+
+    <script>
+        const morningTargetHour = 7
+        const morningTargetMinute = 10
+        const nightTargetHour = 18
+        const nightTargetMinute = 50
+        let targetHour = morningTargetHour;
+        let targetMinute = morningTargetMinute;
+        let warningMinuteLeft = 5;
+        let currentInterval = initProgressBar();
+
+        function toggle(checkbox) {
+            const isMorning = checkbox.checked;
+            if(isMorning){
+                targetHour = morningTargetHour;
+                targetMinute = morningTargetMinute;
+            } else {
+                targetHour = nightTargetHour;
+                targetMinute = nightTargetMinute;
+            }
+
+            const morningSteps = document.querySelectorAll(".steps.morning");
+            morningSteps.forEach(element => {
+                !isMorning ? element.classList.remove('selected') : element.classList.add('selected')
+            });
+
+            const nightSteps = document.querySelectorAll(".steps.night");
+            nightSteps.forEach(element => {
+                isMorning ? element.classList.remove('selected') : element.classList.add('selected')
+            });
+
+            clearInterval(currentInterval);
+            currentInterval = initProgressBar();
+        }
+
+        function initProgressBar(){
+            const elem = document.getElementById("progress-bar");
+            return setInterval(() =>frame(elem), 1000);
+        }
+
+        function frame(elem) {
+            const targetTimeInMinutes = targetHour * 60 + targetMinute;
+            const date = new Date();
+            const currentTimeInMinutes = date.getHours() * 60 + date.getMinutes();
+            const minuteLeft = targetTimeInMinutes - currentTimeInMinutes;
+            let width = currentTimeInMinutes / targetTimeInMinutes * 100;
+
+            if(minuteLeft <= 60 && minuteLeft > 0){
+                width = (1 - minuteLeft / 60) * 100;
+            }
+
+            if (minuteLeft <= 10 && minuteLeft > 0) {
+                elem.classList.add('warning');
+            } else {
+                elem.classList.remove('warning');
+            }
+
+            if(minuteLeft == warningMinuteLeft && date.getSeconds() < warningMinuteLeft){
+                loopAudio(new Audio('./assets/warning.mp3'), 2000);
+            }
+
+            if (width >= 100) {
+                elem.classList.remove('warning');
+                elem.classList.add('expired');
+                elem.style.width ="100%";
+                elem.innerHTML = "0 minutes restantes";
+                clearInterval(currentInterval);
+                loopAudio(new Audio('./assets/alarm.mp3'), 30000);
+                return;
+            } else {
+                elem.classList.remove('expired');
+            }
+
+            elem.style.width = width + "%";
+            elem.innerHTML = minuteLeft + " minutes restantes";
+        }
+
+        function clicked(element) {
+            const isKid1 = element.classList.contains('kid-1');
+            element.classList.contains('selected') ? element.classList.remove('selected') : element.classList.add('selected')
+            if(isKid1 && document.querySelectorAll('.steps.selected .step.kid-1').length === document.querySelectorAll('.steps.selected .step.selected.kid-1').length 
+            || !isKid1 && document.querySelectorAll('.steps.selected .step.kid-2').length === document.querySelectorAll('.steps.selected .step.selected.kid-2').length){
+                const audio = new Audio('./assets/success.mp3');
+                audio.play();
+            }
+        }
+
+        
+        let currentAudio;
+        function loopAudio(audio, millis) {
+            if(!currentAudio || currentAudio.currentTime == 0){
+                currentAudio = audio;
+                audio.loop = true;
+                audio.play();
+                setTimeout(function (){
+                    audio.pause();
+                    currentAudio.currentTime = 0;
+                }, millis)
+            }
+        }
+    </script>
+</html>
